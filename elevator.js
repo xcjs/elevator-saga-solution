@@ -3,7 +3,7 @@
         var lastSelectedElevator = -1;
         
         var getElevator = function() {
-            if(lastSelectedElevator > elevators.length - 1) {
+            if(lastSelectedElevator >= elevators.length - 1) {
                 lastSelectedElevator = 0;    
             } else {
                 lastSelectedElevator++;
