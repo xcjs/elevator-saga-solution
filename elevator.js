@@ -1,8 +1,16 @@
 {
     init: function(elevators, floors) {
-        var getRandomIntInclusive = function(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        };
+        var lastSelectedElevator = -1;
+        
+        var getElevator = function() {
+            if(lastSelectedElevator > elevators.length - 1) {
+                lastSelectedElevator = 0;    
+            } else {
+                lastSelectedElevator++;
+            }
+            
+            return lastSelectedElevator;
+        };       
         
         elevators.forEach(function(elevator) {
             // Whenever the elevator is idle (has no more queued destinations) ...
@@ -16,14 +24,12 @@
         });
 
         floors.forEach(function(floor) {
-            floor.on("up_button_pressed", function() {
-                // Maybe tell an elevator to go to this floor?
-                elevators[getRandomIntInclusive(0, elevators.length - 1)].goToFloor(floor.floorNum());
+            floor.on("up_button_pressed", function() {               
+                elevators[getElevator()].goToFloor(floor.floorNum());
             });
 
             floor.on("down_button_pressed", function() {
-                // Maybe tell an elevator to go to this floor?
-                elevators[getRandomIntInclusive(0, elevators.length - 1)].goToFloor(floor.floorNum());
+                elevators[getElevator()].goToFloor(floor.floorNum());
             });
         });
     },
