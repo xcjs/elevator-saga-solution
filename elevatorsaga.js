@@ -77,7 +77,7 @@
 
             if(pressedFloors.length === 0) return;            
 
-            var newQueue = rearrangeQueue(pos, pressedFloors, dir);
+            var newQueue = rearrangeQueue(pos, pressedFloors);
 
             elevator.destinationQueue = newQueue;
             elevator.checkDestinationQueue();
