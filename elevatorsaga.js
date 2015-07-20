@@ -14,7 +14,7 @@
                 lastSelectedElevator = 0;
                 return lastSelectedElevator;
             }
-
+            
             if(lastSelectedElevator >= elevators.length - 1) {
                 lastSelectedElevator = 0;    
             } else {
@@ -39,6 +39,14 @@
         var rearrangeQueue = function(currentFloor, floorQueue, dir) {
             if(floorQueue.length === 0) return [];
 
+            floorQueue.sort();
+
+            var dir = getElevatorDirection();
+
+            if(dir === directions.down) {
+                floorQueue.reverse();
+            } 
+            
             var splitIndex = -1;
 
             var aboveFloors = [];
@@ -67,15 +75,7 @@
             var pressedFloors = elevator.getPressedFloors();
             var pos = elevator.currentFloor();
 
-            if(pressedFloors.length === 0) return;
-
-            pressedFloors.sort();
-
-            var dir = getElevatorDirection();
-
-            if(dir === directions.down) {
-                pressedFloors.reverse();
-            } 
+            if(pressedFloors.length === 0) return;            
 
             var newQueue = rearrangeQueue(pos, pressedFloors, dir);
 
