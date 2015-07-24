@@ -41,7 +41,7 @@
         };
 
         var rearrangeQueue = function(currentFloor, floorQueue, dir) {
-            if(floorQueue.length === 0) return [];
+            if(floorQueue.length === 0) return;
 
             floorQueue.sort();
 
