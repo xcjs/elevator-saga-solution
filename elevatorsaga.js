@@ -9,6 +9,8 @@
 
         var lastElevatorDirection = directions.down;
 
+
+
         var getElevator = function() {
             if(elevators.length === 1) {
                 lastSelectedElevator = 0;
@@ -52,8 +54,6 @@
             var aboveFloors = [];
             var belowFloors = [];
 
-            var newQueue = null
-
             floorQueue.forEach(function(floor) {
                 if(floor <= currentFloor) {
                     belowFloors.push(floor);
@@ -63,12 +63,10 @@
             });            
 
             if(dir === directions.up) {
-                newQueue = aboveFloors.concat(belowFloors.reverse());
+                floorQueue = aboveFloors.concat(belowFloors.reverse());
             } else {
-                newQueue = belowFloors.concat(aboveFloors.reverse());
+                floorQueue = belowFloors.concat(aboveFloors.reverse());
             }
-
-            return newQueue;
         };
 
         var setElevatorQueue = function(elevator) {
@@ -77,9 +75,7 @@
 
             if(pressedFloors.length === 0) return;            
 
-            var newQueue = rearrangeQueue(pos, pressedFloors);
-
-            elevator.destinationQueue = newQueue;
+            rearrangeQueue(pos, pressedFloors);
             elevator.checkDestinationQueue();
         };
 
@@ -98,11 +94,15 @@
 
         floors.forEach(function(floor) {
             floor.on("up_button_pressed", function() {               
-                elevators[getElevator()].goToFloor(floor.floorNum());
+                var e = elevators[getElevator()];
+                e.goToFloor(floor.floorNum());
+                setElevatorQueue(e);
             });
 
             floor.on("down_button_pressed", function() {
-                elevators[getElevator()].goToFloor(floor.floorNum());
+                var e = elevators[getElevator()];
+                e.goToFloor(floor.floorNum());
+                setElevatorQueue(e);
             });
         });
     },
