@@ -7,7 +7,7 @@
             up: 'up'
         };
 
-        var lastElevatorDirection = directions.down;
+        var lastElevatorDirection = directions.up;
 
         var getElevator = function() {
             if(elevators.length === 1) {
@@ -29,13 +29,21 @@
         };
 
         var getElevatorDirection = function(currentFloor, floorQueue) {
-            if(lastElevatorDirection === directions.down) {
-                lastElevatorDirection = directions.up;
-            } else {
-                lastElevatorDirection = directions.down;
-            }
+            if(currentFloor === 0 || floorQueue.length === 0) return directions.up;
+            if(currentFloor === floors.length + 1) return directions.down;
 
-            return lastElevatorDirection;
+            if(currentFloor < floorQueue[0]) return directions.up;
+            else if(currentFloor > floorQueue[floorQueue.length - 1]) return directions.down;
+            else {
+                if(lastElevatorDirection === directions.down) {
+                    lastElevatorDirection = directions.up;
+                }
+                else {
+                    lastElevatorDirection = directions.down;  
+                }
+
+                return lastElevatorDirection; 
+            }
         };
 
         var rearrangeQueue = function(currentFloor, floorQueue, dir) {
