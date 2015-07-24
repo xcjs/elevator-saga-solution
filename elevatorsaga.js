@@ -1,12 +1,12 @@
 {
     init: function(elevators, floors) {
-        var lastSelectedElevator = -1;
-
         var directions = {
             down: 'down',
-            up: 'up'
+            up: 'up',
+            stopped: 'stopped'
         };
 
+        var lastSelectedElevator = -1;
         var lastElevatorDirection = directions.up;
 
         var getElevator = function() {
@@ -28,42 +28,24 @@
             return lastSelectedElevator;
         };
 
-        var getElevatorDirection = function(currentFloor, floorQueue) {
-            if(currentFloor === 0 || floorQueue.length === 0) return directions.up;
-            if(currentFloor === floors.length + 1) return directions.down;
+        var rearrangeQueue = function(elevator) {
+            var q = elevator.destinationQueue;
+            var currentFloor = elevator.currentFloor();
+            var dir = elevator.destinationDirection();
 
-            if(currentFloor < floorQueue[0]) return directions.up;
-            else if(currentFloor > floorQueue[floorQueue.length - 1]) return directions.down;
-            else {
-                if(lastElevatorDirection === directions.down) {
-                    lastElevatorDirection = directions.up;
-                }
-                else {
-                    lastElevatorDirection = directions.down;  
-                }
+            if(q.length === 0) return;
 
-                return lastElevatorDirection; 
-            }
-        };
+            q.sort();
 
-        var rearrangeQueue = function(currentFloor, floorQueue, dir) {
-            if(floorQueue.length === 0) return;
-
-            floorQueue.sort();
-
-            var dir = getElevatorDirection(currentFloor, floorQueue);
-
-            if(dir === directions.down) {
-                floorQueue.reverse();
-            } 
+            if(dir === directions.down) q.reverse();
             
             var splitIndex = -1;
 
             var aboveFloors = [];
             var belowFloors = [];
 
-            floorQueue.forEach(function(floor) {
-                if(floor <= currentFloor) {
+            q.forEach(function(floor) {
+                if(floor < currentFloor) {
                     belowFloors.push(floor);
                 } else {
                     aboveFloors.push(floor);
@@ -71,32 +53,19 @@
             });            
 
             if(dir === directions.up) {
-                floorQueue = aboveFloors.concat(belowFloors.reverse());
+                elevator.destinationQueue = aboveFloors.concat(belowFloors.reverse());
             } else {
-                floorQueue = belowFloors.concat(aboveFloors.reverse());
+                elevator.destinationQueue = belowFloors.concat(aboveFloors.reverse());
             }
-        };
 
-        var setElevatorQueue = function(elevator) {
-            var pressedFloors = elevator.getPressedFloors();
-            var pos = elevator.currentFloor();
-
-            if(pressedFloors.length === 0) return;            
-
-            rearrangeQueue(pos, pressedFloors);
             elevator.checkDestinationQueue();
         };
 
         elevators.forEach(function(elevator) {
-            // Whenever the elevator is idle (has no more queued destinations) ...       
-
-            elevator.on("idle", function() {
-
-            });
 
             elevator.on("floor_button_pressed", function(floorNum) {               
                 elevator.goToFloor(floorNum);
-                setElevatorQueue(elevator);
+                rearrangeQueue(elevator);
             });
         });
 
@@ -104,18 +73,19 @@
             floor.on("up_button_pressed", function() {               
                 var e = elevators[getElevator()];
                 e.goToFloor(floor.floorNum());
-                setElevatorQueue(e);
+                rearrangeQueue(e);
             });
 
             floor.on("down_button_pressed", function() {
                 var e = elevators[getElevator()];
                 e.goToFloor(floor.floorNum());
-                setElevatorQueue(e);
+                rearrangeQueue(e);
             });
         });
     },
 
-        update: function(dt, elevators, floors) {
-            // We normally don't need to do anything here
-        }   
+    update: function(dt, elevators, floors) {
+        // Do more stuff with the elevators and floors
+        // dt is the number of game seconds that passed since the last time update was called
+    }
 }
