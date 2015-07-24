@@ -9,8 +9,6 @@
 
         var lastElevatorDirection = directions.down;
 
-
-
         var getElevator = function() {
             if(elevators.length === 1) {
                 lastSelectedElevator = 0;
