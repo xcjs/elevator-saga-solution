@@ -21,6 +21,10 @@
                 lastSelectedElevator++;
             }
 
+            if(elevators[lastSelectedElevator].loadFactor() === 1) {
+                lastSelectedElevator = getElevator();
+            }
+
             return lastSelectedElevator;
         };
 
