@@ -28,9 +28,7 @@
             return lastSelectedElevator;
         };
 
-        var getElevatorDirection = function() {
-            lastElevatorDirection;
-
+        var getElevatorDirection = function(currentFloor, floorQueue) {
             if(lastElevatorDirection === directions.down) {
                 lastElevatorDirection = directions.up;
             } else {
@@ -45,7 +43,7 @@
 
             floorQueue.sort();
 
-            var dir = getElevatorDirection();
+            var dir = getElevatorDirection(currentFloor, floorQueue);
 
             if(dir === directions.down) {
                 floorQueue.reverse();
