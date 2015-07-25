@@ -1,85 +1,102 @@
 {
     init: function(elevators, floors) {
         var directions = {
-            down: 'down',
             up: 'up',
+            down: 'down',
             stopped: 'stopped'
         };
 
-        var lastSelectedElevator = -1;
-        var lastElevatorDirection = directions.up;
-
-        var getElevator = function() {
-            if(elevators.length === 1) {
-                lastSelectedElevator = 0;
-                return lastSelectedElevator;
-            }
-            
-            if(lastSelectedElevator >= elevators.length - 1) {
-                lastSelectedElevator = 0;    
-            } else {
-                lastSelectedElevator++;
-            }
-
-            if(elevators[lastSelectedElevator].loadFactor() === 1) {
-                lastSelectedElevator = getElevator();
-            }
-
-            return lastSelectedElevator;
+        var splitToQueue = function(floorNum) {
+            var elevator = getNearestElevator();
+            addToElevatorQueue(elevator, floorNum);
         };
 
-        var rearrangeQueue = function(elevator) {
-            var q = elevator.destinationQueue;
-            var currentFloor = elevator.currentFloor();
+        var addToElevatorQueue = function(elevator, floorNum) {
             var dir = elevator.destinationDirection();
+            var pos = elevator.currentFloor();
+            var max = floors.length - 1;
 
-            if(q.length === 0) return;
+            var nextFloor = getNextFloor(pos, dir, max);          
 
-            q.sort();
+            if(floorNum === nextFloor) {
+                elevator.goToFloor(floorNum, true);
+                return;
+            }
 
-            if(dir === directions.down) q.reverse();
-            
-            var splitIndex = -1;
+            elevator.destinationQueue.push(floorNum);
+            elevator.destinationQueue.sort();
 
             var aboveFloors = [];
             var belowFloors = [];
 
-            q.forEach(function(floor) {
-                if(floor < currentFloor) {
-                    belowFloors.push(floor);
-                } else {
-                    aboveFloors.push(floor);
+            elevator.destinationQueue.forEach(function(item) {
+                if(item > pos) {
+                    aboveFloors.push(item);
+                } else if (item < pos) {
+                    belowFloors.push(item);
                 }
-            });            
+            });
 
-            if(dir === directions.up) {
-                elevator.destinationQueue = aboveFloors.concat(belowFloors.reverse());
+            elevator.destinationQueue = [];
+            belowFloors.reverse();
+
+            if(dir === directions.up || dir === directions.stopped) {)
+                elevator.destinationQueue = elevator.destinationQueue.concat(aboveFloors.concat(belowFloors));
             } else {
-                elevator.destinationQueue = belowFloors.concat(aboveFloors.reverse());
+                elevator.destinationQueue = elevator.destinationQueue.concat(belowFloors.concat(aboveFloors))
             }
 
+            console.log(elevator.destinationQueue);
             elevator.checkDestinationQueue();
         };
 
-        elevators.forEach(function(elevator) {
+        var getNextFloor = function(pos, dir, max) {
+            var nextFloor = null;
 
+            if(pos === 0) {
+                nextFloor = pos + 1;
+            } else if(pos === max) {
+                nextFloor = max;
+            } else if(dir === directions.up) {
+                nextFloor = Math.floor(pos) + 1;
+                if(nextFloor > max) nextFloor = max;
+            } else if(dir === directions.down) {
+                nextFloor = Math.floor(pos) - 1;
+                if(nextFloor < 0) nextFloor = 1;
+            }
+
+            return nextFloor;
+        }
+
+        var getNearestElevator = function(floorNum) {
+            if(elevators.length === 1) return elevators[0];            
+        };
+
+        var getElevatorDistances = function(floorNum) {
+            var lap = floors.length;
+            var factor = 0;
+            var factors = [];
+
+            elevators.forEach(function(e, i) {
+
+            });
+
+            return factors;
+        };
+
+        elevators.forEach(function(elevator) {
             elevator.on("floor_button_pressed", function(floorNum) {               
-                elevator.goToFloor(floorNum);
-                rearrangeQueue(elevator);
+                addToElevatorQueue(elevator, floorNum);
             });
         });
 
         floors.forEach(function(floor) {
             floor.on("up_button_pressed", function() {               
-                var e = elevators[getElevator()];
-                e.goToFloor(floor.floorNum());
-                rearrangeQueue(e);
+                splitToQueue(floor.floorNum());
             });
 
             floor.on("down_button_pressed", function() {
-                var e = elevators[getElevator()];
-                e.goToFloor(floor.floorNum());
-                rearrangeQueue(e);
+                splitToQueue(floor.floorNum());
             });
         });
     },
@@ -89,3 +106,4 @@
         // dt is the number of game seconds that passed since the last time update was called
     }
 }
+    
