@@ -7,7 +7,7 @@
         };
 
         var splitToQueue = function(floorNum) {
-            var elevator = getNearestElevator();
+            var elevator = getNearestElevator(floorNum);
             addToElevatorQueue(elevator, floorNum);
         };
 
@@ -51,7 +51,6 @@
                 elevator.destinationQueue = elevator.destinationQueue.concat(belowFloors.concat(aboveFloors));
             }
 
-            console.log(elevator.destinationQueue);
             elevator.checkDestinationQueue();
         };
 
@@ -74,19 +73,41 @@
         }
 
         var getNearestElevator = function(floorNum) {
-            if(elevators.length === 1) return elevators[0];            
-        };
+            if(elevators.length === 1) return elevators[0];
 
-        var getElevatorDistances = function(floorNum) {
-            var lap = floors.length;
-            var factor = 0;
-            var factors = [];
+            var numFloors = floors.length;
+            var distanceFactors = [];
 
-            elevators.forEach(function(e, i) {
+            elevators.forEach(function(elevator) {
+                var dir = elevator.destinationDirection();
+                var currentFloor = elevator.currentFloor();
 
+                if(dir === directions.up) {
+                    if(floorNum > currentFloor) {
+                        distanceFactors.push(floorNum - currentFloor);
+                    } else if(floorNum < currentFloor) {
+                        distanceFactors.push(currentFloor - floorNum + numFloors);
+                    } else {
+                        distanceFactors.push(0);
+                    }
+                } else if(dir === directions.down) {
+                    if(floorNum < currentFloor) {
+                        distanceFactors.push(currentFloor - floorNum);
+                    } else if(floorNum > currentFloor) {
+                        distanceFactors.push(floorNum - currentFloor + numFloors);
+                    } else {
+                        distanceFactors.push(0);
+                    }
+                } else {
+                    distanceFactors.push(0);
+                }
             });
 
-            return factors;
+            var min = Math.min.apply(Math, distanceFactors);
+            var i = distanceFactors.indexOf(min);
+
+            console.log(distanceFactors);
+            return i !== -1 ? elevators[i] : elevators[0];
         };
 
         elevators.forEach(function(elevator) {
@@ -96,13 +117,11 @@
         });
 
         floors.forEach(function(floor) {
-            floor.on("up_button_pressed", function() { 
-                console.log('Floor ' + floor.floorNum() + ': Going Up');              
+            floor.on("up_button_pressed", function() {              
                 splitToQueue(floor.floorNum());
             });
 
             floor.on("down_button_pressed", function() {
-                console.log('Floor ' + floor.floorNum() + ': Going Down');
                 splitToQueue(floor.floorNum());
             });
         });
