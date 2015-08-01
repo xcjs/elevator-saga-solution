@@ -40,7 +40,7 @@
             elevator.destinationQueue = [];
             belowFloors.reverse();
 
-            if(dir === directions.up || dir === directions.stopped) {)
+            if(dir === directions.up || dir === directions.stopped) {
                 elevator.destinationQueue = elevator.destinationQueue.concat(aboveFloors.concat(belowFloors));
             } else {
                 elevator.destinationQueue = elevator.destinationQueue.concat(belowFloors.concat(aboveFloors));
