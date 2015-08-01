@@ -134,6 +134,11 @@
                 elevator.goingUpIndicator(true);
             };
 
+            if(pos === 0) {
+                goingUp();
+                return;
+            }
+
             if (pos === maxPos - 1) {
                 goingDown();
                 return;
