@@ -38,7 +38,7 @@
             elevator.destinationQueue.forEach(function(item) {
                 if(item > pos) {
                     aboveFloors.push(item);
-                } else if (item < pos) {
+                } else if (item <= pos) {
                     belowFloors.push(item);
                 }
             });
