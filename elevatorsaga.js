@@ -82,24 +82,28 @@
                 var dir = elevator.destinationDirection();
                 var currentFloor = elevator.currentFloor();
 
-                if(dir === directions.up) {
+                if(elevator.loadFactor() === 0) {
+                    distanceFactors.push(elevator.loadFactor());
+                } else if(elevator.loadFactor() === 1) {
+                    distanceFactors.push(numFloors * 2 + elevator.loadFactor());
+                } else if(dir === directions.up) {
                     if(floorNum > currentFloor) {
-                        distanceFactors.push(floorNum - currentFloor);
+                        distanceFactors.push(floorNum - currentFloor + elevator.loadFactor());
                     } else if(floorNum < currentFloor) {
-                        distanceFactors.push(currentFloor - floorNum + numFloors);
-                    } else {
-                        distanceFactors.push(0);
+                        distanceFactors.push(currentFloor - floorNum + numFloors + elevator.loadFactor());
+                    } else { 
+                        distanceFactors.push(elevator.loadFactor());
                     }
                 } else if(dir === directions.down) {
                     if(floorNum < currentFloor) {
-                        distanceFactors.push(currentFloor - floorNum);
+                        distanceFactors.push(currentFloor - floorNum + elevator.loadFactor());
                     } else if(floorNum > currentFloor) {
-                        distanceFactors.push(floorNum - currentFloor + numFloors);
+                        distanceFactors.push(floorNum - currentFloor + numFloors + elevator.loadFactor());
                     } else {
-                        distanceFactors.push(0);
+                        distanceFactors.push(elevator.loadFactor());
                     }
                 } else {
-                    distanceFactors.push(0);
+                    distanceFactors.push(elevator.loadFactor());
                 }
             });
 
