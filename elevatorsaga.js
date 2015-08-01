@@ -110,8 +110,7 @@
 
             var min = Math.min.apply(Math, distanceFactors);
             var i = distanceFactors.indexOf(min);
-
-            console.log(distanceFactors);
+            
             return i !== -1 ? elevators[i] : elevators[0];
         };
 
