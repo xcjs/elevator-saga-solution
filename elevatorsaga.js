@@ -43,7 +43,7 @@
             if(dir === directions.up || dir === directions.stopped) {)
                 elevator.destinationQueue = elevator.destinationQueue.concat(aboveFloors.concat(belowFloors));
             } else {
-                elevator.destinationQueue = elevator.destinationQueue.concat(belowFloors.concat(aboveFloors))
+                elevator.destinationQueue = elevator.destinationQueue.concat(belowFloors.concat(aboveFloors));
             }
 
             console.log(elevator.destinationQueue);
