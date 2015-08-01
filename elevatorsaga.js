@@ -118,6 +118,12 @@
             elevator.on("floor_button_pressed", function(floorNum) {               
                 addToElevatorQueue(elevator, floorNum);
             });
+
+            elevator.on("idle", function() { 
+                if(elevator.currentFloor > 1) {
+                    elevator.goToFloor(Math.floor(floors.length / 2));
+                }
+            });
         });
 
         floors.forEach(function(floor) {
