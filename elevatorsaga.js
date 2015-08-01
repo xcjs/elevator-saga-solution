@@ -12,6 +12,10 @@
         };
 
         var addToElevatorQueue = function(elevator, floorNum) {
+            if(elevator.destinationQueue.indexOf(floorNum) > -1) {
+                return;
+            }
+
             var dir = elevator.destinationDirection();
             var pos = elevator.currentFloor();
             var max = floors.length - 1;
@@ -19,7 +23,8 @@
             var nextFloor = getNextFloor(pos, dir, max);          
 
             if(floorNum === nextFloor) {
-                elevator.goToFloor(floorNum, true);
+                elevator.goToFloor(floorNum);
+                elevator.checkDestinationQueue();
                 return;
             }
 
@@ -55,7 +60,7 @@
 
             if(pos === 0) {
                 nextFloor = pos + 1;
-            } else if(pos === max) {
+            } else if(pos === max - 1) {
                 nextFloor = max;
             } else if(dir === directions.up) {
                 nextFloor = Math.floor(pos) + 1;
@@ -91,11 +96,13 @@
         });
 
         floors.forEach(function(floor) {
-            floor.on("up_button_pressed", function() {               
+            floor.on("up_button_pressed", function() { 
+                console.log('Floor ' + floor.floorNum() + ': Going Up');              
                 splitToQueue(floor.floorNum());
             });
 
             floor.on("down_button_pressed", function() {
+                console.log('Floor ' + floor.floorNum() + ': Going Down');
                 splitToQueue(floor.floorNum());
             });
         });
