@@ -9,6 +9,7 @@
         var splitToQueue = function(floorNum) {
             var elevator = getNearestElevator(floorNum);
             addToElevatorQueue(elevator, floorNum);
+            setIndicator(elevator);
         };
 
         var addToElevatorQueue = function(elevator, floorNum) {
@@ -114,6 +115,44 @@
             return i !== -1 ? elevators[i] : elevators[0];
         };
 
+        var setIndicator = function(elevator) {
+            var dir = elevator.destinationDirection();
+            var pos = elevator.currentFloor();
+            var maxPos = floors.length;
+
+            var goingUp = function() {
+                elevator.goingUpIndicator(true);
+                elevator.goingDownIndicator(false);
+            };
+
+            var goingDown = function() {
+                elevator.goingDownIndicator(true);
+                elevator.goingUpIndicator(false);
+            }
+
+            var goingNowhere = function() {
+                elevator.goingDownIndicator(true);
+                elevator.goingUpIndicator(true);
+            };
+
+            if (pos === maxPos - 1) {
+                goingDown();
+                return;
+            }
+
+            switch(dir) {
+                default:
+                    goingNowhere();
+                    break;
+                case directions.up:
+                    goingUp();
+                    break;
+                case directions.down:
+                    goingDown();
+                    break;
+            }
+        }
+
         elevators.forEach(function(elevator) {
             elevator.on("floor_button_pressed", function(floorNum) {               
                 addToElevatorQueue(elevator, floorNum);
@@ -123,6 +162,15 @@
                 if(elevator.currentFloor > 1) {
                     elevator.goToFloor(Math.floor(floors.length / 2));
                 }
+                setIndicator(elevator);
+            });
+
+            elevator.on("passing_floor", function(floorNum, direction) {
+                setIndicator(elevator);
+            });
+
+            elevator.on('stopped_at_floor', function(floorNum) {
+                setIndicator(elevator);
             });
         });
 
