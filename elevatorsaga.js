@@ -21,14 +21,6 @@
             var pos = elevator.currentFloor();
             var max = floors.length - 1;
 
-            var nextFloor = getNextFloor(pos, dir, max);          
-
-            if(floorNum === nextFloor) {
-                elevator.goToFloor(floorNum);
-                elevator.checkDestinationQueue();
-                return;
-            }
-
             elevator.destinationQueue.push(floorNum);
             elevator.destinationQueue.sort();
 
@@ -54,24 +46,6 @@
 
             elevator.checkDestinationQueue();
         };
-
-        var getNextFloor = function(pos, dir, max) {
-            var nextFloor = null;
-
-            if(pos === 0) {
-                nextFloor = pos + 1;
-            } else if(pos === max - 1) {
-                nextFloor = max;
-            } else if(dir === directions.up) {
-                nextFloor = Math.floor(pos) + 1;
-                if(nextFloor > max) nextFloor = max;
-            } else if(dir === directions.down) {
-                nextFloor = Math.floor(pos) - 1;
-                if(nextFloor < 0) nextFloor = 1;
-            }
-
-            return nextFloor;
-        }
 
         var getNearestElevator = function(floorNum) {
             if(elevators.length === 1) return elevators[0];
