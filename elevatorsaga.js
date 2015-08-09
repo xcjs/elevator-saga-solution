@@ -131,9 +131,7 @@
             var goingDown = function() {
                 elevator.goingDownIndicator(true);
                 elevator.goingUpIndicator(false);
-            }
-
-            });
+            };
 
             var goingNowhere = function() {
                 elevator.goingDownIndicator(true);
