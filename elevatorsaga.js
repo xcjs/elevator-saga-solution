@@ -17,7 +17,7 @@
         };
 
         /*----------------------------------------------------------------------
-            Adds a floor number to the elevator queue. This does does not use
+            Adds a floor number to the elevator queue. This does not use
             the built in goToFloor function as floors may need to be inserted
             into the middle of the queue.
 
