@@ -1,17 +1,33 @@
 {
     init: function(elevators, floors) {
+
+        // Object to be used as elevator direction enumeration to aid in
+        // autocomplete of text editors or IDEs to lessen typos.
         var directions = {
             up: 'up',
             down: 'down',
             stopped: 'stopped'
         };
 
+        // Selects the most efficient elevator to assign a floor button press to.
         var splitToQueue = function(floorNum) {
             var elevator = getNearestElevator(floorNum);
             addToElevatorQueue(elevator, floorNum);
             setIndicator(elevator);
         };
 
+        /*----------------------------------------------------------------------
+            Adds a floor number to the elevator queue. This does does not use
+            the built in goToFloor function as floors may need to be inserted
+            into the middle of the queue.
+
+            goToFloor can only add a floor to the beginning or end of the queue.
+
+            While this could be an expensive operation (rebuilding an array on
+            every press), any modern system should be able to handle the rate
+            and sizes of the array just fine. Elevator travel time is far more
+            likely to be a bottleneck than this function.
+        --------------------------------------------------------------------- */
         var addToElevatorQueue = function(elevator, floorNum) {
             if(elevator.destinationQueue.indexOf(floorNum) > -1) {
                 return;
@@ -47,6 +63,16 @@
             elevator.checkDestinationQueue();
         };
 
+        /* ---------------------------------------------------------------------
+            Calculates the proximty score for each elevator given a floor
+            number, and then returns the elevator with the lowest proximity
+            score.
+
+            This may not necessarily return the closest elevator - some 
+            eleavtors may have queues or current directions of travel that will
+            cause them to cycle around the floors before returning to the floor
+            provided.
+        --------------------------------------------------------------------- */
         var getNearestElevator = function(floorNum) {
             if(elevators.length === 1) return elevators[0];
 
@@ -88,6 +114,10 @@
             return i !== -1 ? elevators[i] : elevators[0];
         };
 
+        /* ---------------------------------------------------------------------
+            Attempts to set the direction indicator for each elevator at any
+            time it is called, provided an eleavtor object to inspect.
+        --------------------------------------------------------------------- */
         var setIndicator = function(elevator) {
             var dir = elevator.destinationDirection();
             var pos = elevator.currentFloor();
@@ -102,6 +132,8 @@
                 elevator.goingDownIndicator(true);
                 elevator.goingUpIndicator(false);
             }
+
+            });
 
             var goingNowhere = function() {
                 elevator.goingDownIndicator(true);
