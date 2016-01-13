@@ -24,9 +24,9 @@
             goToFloor can only add a floor to the beginning or end of the queue.
 
             While this could be an expensive operation (rebuilding an array on
-            every press), any modern system should be able to handle the rate
-            and sizes of the array just fine. Elevator travel time is far more
-            likely to be a bottleneck than this function.
+            every up/down button press), any modern system should be able to 
+            handle the rate and sizes of the array just fine. Elevator travel 
+            time is far more likely to be a bottleneck than this function.
         --------------------------------------------------------------------- */
         var addToElevatorQueue = function(elevator, floorNum) {
             if(elevator.destinationQueue.indexOf(floorNum) > -1) {
@@ -64,12 +64,12 @@
         };
 
         /* ---------------------------------------------------------------------
-            Calculates the proximty score for each elevator given a floor
+            Calculates the proximity score for each elevator given a floor
             number, and then returns the elevator with the lowest proximity
             score.
 
             This may not necessarily return the closest elevator - some 
-            eleavtors may have queues or current directions of travel that will
+            elevators may have queues or current directions of travel that will
             cause them to cycle around the floors before returning to the floor
             provided.
         --------------------------------------------------------------------- */
@@ -116,7 +116,7 @@
 
         /* ---------------------------------------------------------------------
             Attempts to set the direction indicator for each elevator at any
-            time it is called, provided an eleavtor object to inspect.
+            time it is called, provided an elevator object to inspect.
         --------------------------------------------------------------------- */
         var setIndicator = function(elevator) {
             var dir = elevator.destinationDirection();
